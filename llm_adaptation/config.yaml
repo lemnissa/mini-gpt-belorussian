@@ -1,0 +1,41 @@
+model:
+  base_model: Qwen/Qwen2.5-0.5B-Instruct
+  max_seq_length: 512
+
+data:
+  instruction_path: llm_adaptation/data/be_instructions.jsonl
+  fallback_corpus_path: data/corpus_be.txt
+  train_split: 0.9
+  max_samples: 12000
+  min_text_chars: 80
+
+training:
+  output_dir: llm_adaptation/artifacts/qwen_be_lora
+  num_train_epochs: 2
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  logging_steps: 20
+  eval_steps: 100
+  save_steps: 200
+  max_steps: 1200
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+inference:
+  max_new_tokens: 200
+  temperature: 0.8
+  top_p: 0.9
+  do_sample: true
+
+experiment:
+  seed: 42
+  run_name: qwen_be_lora_v1
